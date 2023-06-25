@@ -1,7 +1,14 @@
-\documentclass[12pt]{article}
+\documentclass[
+%! fontsize !% 
+]{article}
 \usepackage{tikz}
 \usepackage{pgf}
 \usepackage{pgfplots}
+\usetikzlibrary{arrows, calc, fit, pgfplots.statistics, patterns}
+\pgfplotsset{
+    compat=1.17, 
+    width=10cm
+}
 \usepackage[active,tightpage]{preview}
 \usetikzlibrary{arrows}
 \PreviewEnvironment[]{tikzpicture}

@@ -28,6 +28,9 @@ public static class Program
     /// If true, the output file is left in the same directory as the input tikz file.
     /// Otherwise, it is instead left in the current directory.
     /// </param>
+    /// <param name="fontsize">
+    /// Font size used in the LaTeX template.
+    /// </param>
     /// <param name="verbose">
     /// Prints debug info.
     /// </param>
@@ -36,6 +39,7 @@ public static class Program
         bool png = false,
         bool keepTempFiles = false, 
         bool outputNearSource = true, 
+        string fontsize = "11pt",
         bool verbose = false
     )
     {
@@ -63,15 +67,29 @@ public static class Program
         }
         
         var templatePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "tex-template.tex");
-        var placeholder = "%! content goes here !%";
+        var contentMarker = "%! content goes here !%";
+        var fontsizeMarker = "%! fontsize !%";
 
         var templateContent = await File.ReadAllTextAsync(templatePath);
         var tikzFileContent = await File.ReadAllTextAsync(tikzFilePath);
-        var texContent = templateContent.Replace(placeholder, tikzFileContent);
+        var texContent = templateContent
+            .Replace(contentMarker, tikzFileContent)
+            .Replace(fontsizeMarker, fontsize);
         await File.WriteAllTextAsync(texFilePath, texContent);
+
+        var baseName = Path.GetFileNameWithoutExtension(texFilePath);
+        var pdfFileName = baseName + ".pdf";
+        var outPdfFilePath = Path.Join(outDir, pdfFileName);
 
         var stdOutBuffer = new StringBuilder();
         var stdErrBuffer = new StringBuilder();
+
+        if (workDir == outDir)
+        {
+            if( File.Exists(outPdfFilePath) ) {
+                File.Delete(outPdfFilePath);
+            }
+        }
 
         var result = await Cli.Wrap("pdflatex")
             .WithArguments(new[] {texFilePath})
@@ -87,25 +105,26 @@ public static class Program
         // Console.WriteLine(stdOut);
         Console.WriteLine(stdErr);
 
+        if (!File.Exists(outPdfFilePath))
+        {
+            Console.WriteLine("No pdf produced!");
+            Environment.Exit(1);
+        }
+
         if (workDir != outDir)
         {
-            var baseName = Path.GetFileNameWithoutExtension(texFilePath);
-            var pdfFileName = baseName + ".pdf";
             var tmpPdfFilePath = Path.Join(workDir, pdfFileName);
-            var outPdfFilePath = Path.Join(outDir, pdfFileName);
             File.Copy(tmpPdfFilePath, outPdfFilePath, true);            
         }
 
         if (png)
         {
-            var baseName = Path.GetFileNameWithoutExtension(texFilePath);
-            var pdfFileName = baseName + ".pdf";
-            var outPdfFilePath = Path.Join(outDir, pdfFileName);
             var pngFileName = baseName + ".png";
             var outPngFilePath = Path.Join(outDir, pngFileName);
 
             var pdfContent = File.ReadAllBytes(outPdfFilePath);
             
+            File.Delete(outPngFilePath);
             PDFtoImage.Conversion.SavePng(outPngFilePath, pdfContent);
         }
 
