@@ -18,3 +18,5 @@ if(-not ($env:Path -contains $installFolder)) {
     $env:Path += ";$installFolder"
     [System.Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::User)
 }
+
+Write-Host "Done."
