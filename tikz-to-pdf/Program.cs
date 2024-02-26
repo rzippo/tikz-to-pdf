@@ -1,4 +1,4 @@
-using System.Runtime.Versioning;
+﻿using System.Runtime.Versioning;
 using System.Text;
 using CliWrap;
 
@@ -31,6 +31,9 @@ public static class Program
     /// <param name="fontsize">
     /// Font size used in the LaTeX template.
     /// </param>
+    /// <param name="confirm">
+    /// If true, prints "Done." to confirm success.
+    /// </param>
     /// <param name="verbose">
     /// Prints debug info.
     /// </param>
@@ -40,6 +43,7 @@ public static class Program
         bool keepTempFiles = false,
         bool outputNearSource = true,
         string fontsize = "11pt",
+        bool confirm = false,
         bool verbose = false
     )
     {
@@ -106,6 +110,9 @@ public static class Program
         var stdErr = stdErrBuffer.ToString();
 
         // Console.WriteLine(stdOut);
+        if (stdErr.Length > 0) {
+            Console.WriteLine(stdErr);
+        }
 
         if (workDir != outDir)
         {
@@ -143,6 +150,8 @@ public static class Program
             PDFtoImage.Conversion.SavePng(outPngFilePath, pdfContent);
         }
 
-        Console.WriteLine("Done.");
+        if (confirm) {
+            Console.WriteLine("Done.");
+        }
     }
 }
