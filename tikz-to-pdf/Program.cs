@@ -144,7 +144,7 @@ public static class Program
             var pngFileName = baseName + ".png";
             var outPngFilePath = Path.Join(outDir, pngFileName);
 
-            var pdfContent = File.ReadAllBytes(outPdfFilePath);
+            var pdfContent = await File.ReadAllBytesAsync(outPdfFilePath);
 
             File.Delete(outPngFilePath);
             PDFtoImage.Conversion.SavePng(outPngFilePath, pdfContent);
