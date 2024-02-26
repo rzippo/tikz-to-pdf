@@ -9,7 +9,7 @@ namespace tikz_to_pdf;
 [SupportedOSPlatform("Linux")]
 [SupportedOSPlatform("macOS")]
 [SupportedOSPlatform("Android31.0")]
-public static class Program 
+public static class Program
 {
     /// <summary>
     /// Renders a tikz picture into a pdf, using a LaTeX template and pdflatex.
@@ -37,8 +37,8 @@ public static class Program
     public static async Task Main(
         string argument,
         bool png = false,
-        bool keepTempFiles = false, 
-        bool outputNearSource = true, 
+        bool keepTempFiles = false,
+        bool outputNearSource = true,
         string fontsize = "11pt",
         bool verbose = false
     )
@@ -50,10 +50,10 @@ public static class Program
         var outDir = outputNearSource ?
             sourceDir :
             Directory.GetCurrentDirectory();
-        var workDir = keepTempFiles ? 
-            outDir : 
+        var workDir = keepTempFiles ?
+            outDir :
             Directory.CreateTempSubdirectory().FullName;
-        
+
         if (verbose) {
             Console.WriteLine($"sourceDir: {sourceDir}");
             Console.WriteLine($"outDir: {outDir}");
@@ -65,7 +65,7 @@ public static class Program
         if (verbose) {
             Console.WriteLine($"texFilePath: {texFilePath}");
         }
-        
+
         var templatePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "tex-template.tex");
         var contentMarker = "%! content goes here !%";
         var fontsizeMarker = "%! fontsize !%";
@@ -114,7 +114,7 @@ public static class Program
         if (workDir != outDir)
         {
             var tmpPdfFilePath = Path.Join(workDir, pdfFileName);
-            File.Copy(tmpPdfFilePath, outPdfFilePath, true);            
+            File.Copy(tmpPdfFilePath, outPdfFilePath, true);
         }
 
         if (png)
@@ -123,7 +123,7 @@ public static class Program
             var outPngFilePath = Path.Join(outDir, pngFileName);
 
             var pdfContent = File.ReadAllBytes(outPdfFilePath);
-            
+
             File.Delete(outPngFilePath);
             PDFtoImage.Conversion.SavePng(outPngFilePath, pdfContent);
         }
