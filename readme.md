@@ -17,3 +17,10 @@ tikz-to-pdf figure.tikz --png
 ```
 
 You will then find `figure.tikz.pdf` and `figure.tikz.png` in the same folder.
+
+## Requirements
+
+Building this project requires .Net 8.0 SDK.
+The program launches `pdflatex`, which needs to be installed on available from PATH.
+
+The `install.ps1` PowerShell script works only on Windows.
