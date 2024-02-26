@@ -11,7 +11,7 @@ else {
 }
 
 # Copy build to install folder
-Copy-Item -Recurse .\tikz-to-pdf\bin\Release\net7.0\publish\* $env:LOCALAPPDATA\Programs\tikz-to-pdf
+Copy-Item -Recurse .\tikz-to-pdf\bin\Release\net8.0\publish\* $env:LOCALAPPDATA\Programs\tikz-to-pdf
 
 # If install folder is not in path, add it
 if(-not ($env:Path -contains $installFolder)) {
