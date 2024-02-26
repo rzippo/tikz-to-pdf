@@ -1,4 +1,4 @@
-﻿using System.Runtime.Versioning;
+using System.Runtime.Versioning;
 using System.Text;
 using CliWrap;
 
@@ -80,6 +80,9 @@ public static class Program
         var baseName = Path.GetFileNameWithoutExtension(texFilePath);
         var pdfFileName = baseName + ".pdf";
         var outPdfFilePath = Path.Join(outDir, pdfFileName);
+        if (verbose) {
+            Console.WriteLine($"outPdfFilePath: {outPdfFilePath}");
+        }
 
         var stdOutBuffer = new StringBuilder();
         var stdErrBuffer = new StringBuilder();
@@ -103,18 +106,30 @@ public static class Program
         var stdErr = stdErrBuffer.ToString();
 
         // Console.WriteLine(stdOut);
-        Console.WriteLine(stdErr);
 
-        if (!File.Exists(outPdfFilePath))
+        if (workDir != outDir)
         {
-            Console.WriteLine("No pdf produced!");
-            Environment.Exit(1);
+            var tmpPdfFilePath = Path.Join(workDir, pdfFileName);
+            if (verbose) {
+                Console.WriteLine($"tmpPdfFilePath: {tmpPdfFilePath}");
+            }
         }
 
         if (workDir != outDir)
         {
             var tmpPdfFilePath = Path.Join(workDir, pdfFileName);
+            if (!File.Exists(tmpPdfFilePath))
+            {
+                Console.WriteLine("No pdf produced!");
+                Environment.Exit(1);
+            }
             File.Copy(tmpPdfFilePath, outPdfFilePath, true);
+        }
+
+        if (!File.Exists(outPdfFilePath))
+        {
+            Console.WriteLine("No pdf produced!");
+            Environment.Exit(1);
         }
 
         if (png)
