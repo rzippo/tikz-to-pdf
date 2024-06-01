@@ -47,6 +47,12 @@ public static class Program
         bool verbose = false
     )
     {
+        if(!await TestPdfLatex())
+        {
+            Console.WriteLine(" ! pdflatex not found in PATH - aborting.");
+            System.Environment.Exit(1);
+        }
+
         var tikzFilePath = argument;
         var tikzFileName = Path.GetFileName(argument);
 
@@ -152,6 +158,20 @@ public static class Program
 
         if (confirm) {
             Console.WriteLine("Done.");
+        }
+    }
+
+    public static async Task<bool> TestPdfLatex()
+    {
+        try {
+            var result = await Cli.Wrap("pdflatex")
+                .WithArguments("--version")
+                .ExecuteAsync();
+            return true;
+        }
+        catch(System.ComponentModel.Win32Exception ex)
+        {
+            return false;
         }
     }
 }
