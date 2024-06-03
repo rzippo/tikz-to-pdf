@@ -161,6 +161,7 @@ public static class Program
         }
     }
 
+    /// Tries to call pdflatex, return false if it fails.
     public static async Task<bool> TestPdfLatex()
     {
         try {
@@ -169,7 +170,7 @@ public static class Program
                 .ExecuteAsync();
             return true;
         }
-        catch(System.ComponentModel.Win32Exception ex)
+        catch(System.ComponentModel.Win32Exception)
         {
             return false;
         }
